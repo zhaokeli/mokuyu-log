@@ -1,0 +1,20 @@
+{
+    "name": "mokuyu/ank-log",
+    "description": "log",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "mokuyu",
+        "email": "735579768@qq.com"
+    }],
+    "require":
+    {},
+    "autoload":
+    {
+        "psr-4":
+        {
+            "ank\\": "libs"
+        }
+    }
+}
