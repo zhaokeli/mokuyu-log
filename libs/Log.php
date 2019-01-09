@@ -26,13 +26,13 @@ class Log
         }
         $time   = date('Y-m-d H:i:s : ');
         $logstr = "{$time}{$str}\r\n";
-        file_put_contents($filePath, $logstr, FILE_APPEND);
-        // //多线程
-        // $fp = fopen($filePath, 'w+');
-        // if (flock($fp, LOCK_EX)) {
-        //     fwrite($fp, $logstr);
-        //     flock($fp, LOCK_UN);
-        // }
-        // fclose($fp);
+        // file_put_contents($filePath, $logstr, FILE_APPEND);
+        //多线程
+        $fp = fopen($filePath, 'a');
+        if (flock($fp, LOCK_EX)) {
+            fwrite($fp, $logstr);
+            flock($fp, LOCK_UN);
+        }
+        fclose($fp);
     }
 }
