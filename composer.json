@@ -10,7 +10,9 @@
         "email": "735579768@qq.com"
     }],
     "require":
-    {},
+    {
+        "monolog/monolog": "^2.0@dev"
+    },
     "autoload":
     {
         "psr-4":
