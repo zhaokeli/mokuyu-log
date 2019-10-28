@@ -11,7 +11,9 @@ class Log implements LoggerInterface
      * @var string
      */
     private $logPath = __dir__ . '/logs/{Y}{m}/{d}/{type}';
-    private $log     = [];
+    //日志头,每次写文件时会写到日志内容前面
+    private $header = null;
+    private $log    = [];
     public function __construct($config)
     {
         foreach ($config as $key => $value) {
@@ -33,6 +35,10 @@ class Log implements LoggerInterface
         $message            = strtr($message, $replace);
         $this->log[$type][] = $message;
     }
+    public function header($str = '')
+    {
+        $this->header = PHP_EOL . $str;
+    }
     /**
      * 最终保存到硬盘上
      * @authname [权限名字]     0
@@ -42,24 +48,29 @@ class Log implements LoggerInterface
      */
     public function save()
     {
-        $logstr = '';
+        $logstr      = '';
+        $pathReplace = [
+            '{y}' => date('y'),
+            '{Y}' => date('Y'),
+            '{m}' => date('m'),
+            '{d}' => date('d'),
+
+        ];
+        $isSingle = strpos($this->logPath, '{type}') === false ? false : true;
         foreach ($this->log as $type => $value) {
             foreach ($value as $k => $v) {
                 if (!is_string($v)) {
                     $v = json_encode($vv, JSON_UNESCAPED_UNICODE);
                 }
-                $logstr .= PHP_EOL . $v;
+                $logstr .= PHP_EOL . '[' . $type . '] ' . $v;
             }
-            //替换成真实路径
-            $logPath = strtr($this->logPath, [
-                '{y}'    => date('y'),
-                '{Y}'    => date('Y'),
-                '{m}'    => date('m'),
-                '{d}'    => date('d'),
-                '{type}' => $type,
-            ]) . '.log';
-            file_exists($logPath) || @mkdir(dirname($logPath), 0777, true);
-            file_put_contents($logPath, $logstr, FILE_APPEND);
+            if ($isSingle) {
+                $pathReplace['{type}'] = $type;
+                //替换成真实路径
+                $this->toFile($logstr, $pathReplace);
+                $logstr = '';
+            }
+
             //多线程
             // $fp = fopen($logPath, 'a');
             // if (flock($fp, LOCK_EX)) {
@@ -68,7 +79,23 @@ class Log implements LoggerInterface
             // }
             // fclose($fp);
         }
+        if (!$isSingle) {
+            $this->toFile($logstr, $pathReplace);
+        }
+        $this->log = [];
 
+    }
+    protected function toFile($content, $pathReplace)
+    {
+        $header = '';
+        if ($this->header === null) {
+            $header = PHP_EOL . str_repeat('-', 30) . PHP_EOL . '[' . date('Y-m-d H:i:s') . ']';
+        } else {
+            $header = $this->header;
+        }
+        $logPath = strtr($this->logPath, $pathReplace) . '.log';
+        file_exists($logPath) || @mkdir(dirname($logPath), 0777, true);
+        file_put_contents($logPath, $header . $content, FILE_APPEND);
     }
     /**
      * 清空日志
