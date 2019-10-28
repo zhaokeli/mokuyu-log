@@ -4,7 +4,7 @@ namespace ank;
 
 use Psr\Log\LoggerInterface;
 
-class Log implements LoggerInterface
+class Logger implements LoggerInterface
 {
     /**
      * 日志保存路径
