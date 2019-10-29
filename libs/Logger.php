@@ -10,10 +10,15 @@ class Logger implements LoggerInterface
      * 日志保存路径
      * @var string
      */
-    private $logPath = __dir__ . '/logs/{Y}{m}/{d}/{type}';
+    protected $logPath = __dir__ . '/logs/{Y}{m}/{d}/{type}';
     //日志头,每次写文件时会写到日志内容前面
-    private $header = null;
-    private $log    = [];
+    protected $header = null;
+    protected $log    = [];
+    //如果设置的话，只记录这些级别的日志
+    // private $level  = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+    protected $level = [];
+    //是否记录日志
+    protected $start = true;
     public function __construct($config)
     {
         foreach ($config as $key => $value) {
@@ -35,9 +40,26 @@ class Logger implements LoggerInterface
         $message            = strtr($message, $replace);
         $this->log[$type][] = $message;
     }
-    public function header($str = '')
+    public function header(string $str = null)
     {
-        $this->header = PHP_EOL . $str;
+        if ($str === null) {
+            return $this->header;
+        } else {
+            $this->header = PHP_EOL . $str;
+        }
+
+    }
+    public function level(array $value = null)
+    {
+        if ($value === null) {
+            return $this->level;
+        } else {
+            $this->level = $value;
+        }
+    }
+    public function start(bool $value = true): void
+    {
+        $this->start = $value;
     }
     /**
      * 最终保存到硬盘上
@@ -46,8 +68,11 @@ class Logger implements LoggerInterface
      * @DateTime 2019-10-28
      * @return   [type]
      */
-    public function save()
+    public function save(): void
     {
+        if (!$this->start) {
+            return;
+        }
         $logstr      = '';
         $pathReplace = [
             '{y}' => date('y'),
@@ -58,6 +83,9 @@ class Logger implements LoggerInterface
         ];
         $isSingle = strpos($this->logPath, '{type}') === false ? false : true;
         foreach ($this->log as $type => $value) {
+            if ($this->level && !in_array($type, $this->level)) {
+                continue;
+            }
             foreach ($value as $k => $v) {
                 if (!is_string($v)) {
                     $v = json_encode($vv, JSON_UNESCAPED_UNICODE);
@@ -85,7 +113,7 @@ class Logger implements LoggerInterface
         $this->log = [];
 
     }
-    protected function toFile($content, $pathReplace)
+    protected function toFile(string $content, array $pathReplace): void
     {
         $header = '';
         if ($this->header === null) {
@@ -105,7 +133,7 @@ class Logger implements LoggerInterface
      * @param    [type]     $type [description]
      * @return   [type]
      */
-    public function clear($type = null)
+    public function clear(string $type = null): void
     {
         if ($type === null) {
             $this->log = [];
