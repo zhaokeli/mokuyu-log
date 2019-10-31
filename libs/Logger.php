@@ -90,7 +90,7 @@ class Logger implements LoggerInterface
                 if (!is_string($v)) {
                     $v = json_encode($vv, JSON_UNESCAPED_UNICODE);
                 }
-                $logstr .= PHP_EOL . '[' . $type . '] ' . $v;
+                $logstr .= PHP_EOL . '[' . $type . '] ' . PHP_EOL . $v;
             }
             if ($isSingle) {
                 $pathReplace['{type}'] = $type;
