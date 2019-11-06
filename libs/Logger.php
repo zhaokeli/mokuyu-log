@@ -122,7 +122,7 @@ class Logger implements LoggerInterface
             $header = $this->header;
         }
         $logPath = strtr($this->logPath, $pathReplace) . '.log';
-        file_exists($logPath) || @mkdir(dirname($logPath), 0777, true);
+        is_dir(dirname($logPath)) || @mkdir(dirname($logPath), 0777, true);
         file_put_contents($logPath, $header . $content, FILE_APPEND);
     }
     /**
