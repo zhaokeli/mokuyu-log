@@ -1,10 +1,10 @@
 <?php
 declare (strict_types = 1);
-namespace ank;
+namespace mokuyu;
 
 use Psr\Log\LoggerInterface;
 
-class Logger implements LoggerInterface
+class Log implements LoggerInterface
 {
     //日志头,每次写文件时会写到日志内容前面
     protected $header = null;

@@ -17,7 +17,7 @@
     {
         "psr-4":
         {
-            "ank\\": "libs"
+            "mokuyu\\": "src"
         }
     },
     "extra":
