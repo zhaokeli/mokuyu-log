@@ -6,6 +6,22 @@ use Psr\Log\LoggerInterface;
 
 class Log implements LoggerInterface
 {
+    const ALERT = 'alert';
+
+    const CRITICAL = 'critical';
+
+    const DEBUG = 'debug';
+
+    const EMERGENCY = 'emergency';
+
+    const ERROR = 'error';
+
+    const INFO = 'info';
+
+    const NOTICE = 'notice';
+
+    const WARNING = 'warning';
+
     //日志头,每次写文件时会写到日志内容前面
     protected $header = null;
 
