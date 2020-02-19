@@ -277,7 +277,11 @@ class Log implements LoggerInterface
             $header = $this->header;
         }
         $logPath = strtr($this->logPath, $pathReplace) . '.log';
-        is_dir(dirname($logPath)) || @mkdir(dirname($logPath), 0777, true);
+        $dirPath = dirname($logPath);
+        if (!is_dir($dirPath)) {
+            @mkdir($dirPath, 0777, true);
+            @chmod($dirPath, 0777);
+        }
         file_put_contents($logPath, $header . $content, FILE_APPEND);
     }
 }
