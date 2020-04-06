@@ -1,5 +1,6 @@
 <?php
 declare (strict_types = 1);
+
 namespace mokuyu;
 
 use Psr\Log\LoggerInterface;
@@ -22,11 +23,17 @@ class Log implements LoggerInterface
 
     const WARNING = 'warning';
 
-    //日志头,每次写文件时会写到日志内容前面
+    /**
+     * 日志头,每次写文件时会写到日志内容前面
+     * @var null
+     */
     protected $header = null;
 
-    //如果设置的话，只记录这些级别的日志
-    // private $level  = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+    /**
+     * ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+     * 如果设置的话，只记录这些级别的日志
+     * @var array
+     */
     protected $level = [];
 
     protected $log = [];
@@ -37,7 +44,10 @@ class Log implements LoggerInterface
      */
     protected $logPath = __dir__ . '/logs/{Y}{m}/{d}/{type}';
 
-    //是否记录日志
+    /**
+     * 是否记录日志
+     * @var bool
+     */
     protected $start = true;
 
     public function __construct($config)
@@ -51,8 +61,8 @@ class Log implements LoggerInterface
     /**
      * 记录警报信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function alert($message, array $context = []): void
@@ -65,15 +75,15 @@ class Log implements LoggerInterface
      * @authname [权限名字]     0
      * @DateTime 2019-10-28
      * @Author   mokuyu
-     *
-     * @param  [type]   $type [description]
-     * @return [type]
+     * @param string|null $type
+     * @return void [type]
      */
     public function clear(string $type = null): void
     {
         if ($type === null) {
             $this->log = [];
-        } elseif (isset($this->log[$type])) {
+        }
+        elseif (isset($this->log[$type])) {
             $this->log[$type] = [];
         }
     }
@@ -81,8 +91,8 @@ class Log implements LoggerInterface
     /**
      * 记录紧急情况
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function critical($message, array $context = []): void
@@ -93,8 +103,8 @@ class Log implements LoggerInterface
     /**
      * 记录调试信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function debug($message, array $context = []): void
@@ -105,8 +115,8 @@ class Log implements LoggerInterface
     /**
      * 记录emergency信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function emergency($message, array $context = []): void
@@ -117,8 +127,8 @@ class Log implements LoggerInterface
     /**
      * 记录错误信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function error($message, array $context = []): void
@@ -126,11 +136,17 @@ class Log implements LoggerInterface
         $this->log(__FUNCTION__, $message, $context);
     }
 
+    /**
+     * 日志头信息,每次写日志操作会追加在前面
+     * @param string|null $str
+     * @return null |null
+     */
     public function header(string $str = null)
     {
         if ($str === null) {
             return $this->header;
-        } else {
+        }
+        else {
             $this->header = PHP_EOL . $str;
         }
 
@@ -139,8 +155,8 @@ class Log implements LoggerInterface
     /**
      * 记录一般信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function info($message, array $context = []): void
@@ -148,11 +164,17 @@ class Log implements LoggerInterface
         $this->log(__FUNCTION__, $message, $context);
     }
 
+    /**
+     * 设置当前记录的日志等级
+     * @param array|null $value
+     * @return array
+     */
     public function level(array $value = null)
     {
         if ($value === null) {
             return $this->level;
-        } else {
+        }
+        else {
             $this->level = $value;
         }
     }
@@ -160,9 +182,9 @@ class Log implements LoggerInterface
     /**
      * 记录日志信息
      * @access public
-     * @param  string $level   日志级别
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param string $level   日志级别
+     * @param mixed  $message 日志信息
+     * @param array  $context 替换内容
      * @return void
      */
     public function log($level, $message, array $context = []): void
@@ -173,8 +195,8 @@ class Log implements LoggerInterface
     /**
      * 记录notice信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function notice($message, array $context = []): void
@@ -187,8 +209,7 @@ class Log implements LoggerInterface
      * @authname [权限名字]     0
      * @DateTime 2019-10-28
      * @Author   mokuyu
-     *
-     * @return [type]
+     * @return void [type]
      */
     public function save(): void
     {
@@ -203,14 +224,14 @@ class Log implements LoggerInterface
             '{d}' => date('d'),
 
         ];
-        $isSingle = strpos($this->logPath, '{type}') === false ? false : true;
+        $isSingle    = strpos($this->logPath, '{type}') === false ? false : true;
         foreach ($this->log as $type => $value) {
             if ($this->level && !in_array($type, $this->level)) {
                 continue;
             }
             foreach ($value as $k => $v) {
                 if (!is_string($v)) {
-                    $v = json_encode($vv, JSON_UNESCAPED_UNICODE);
+                    $v = json_encode($v, JSON_UNESCAPED_UNICODE);
                 }
                 $logstr .= PHP_EOL . '[' . $type . '] ' . PHP_EOL . $v;
             }
@@ -236,6 +257,10 @@ class Log implements LoggerInterface
 
     }
 
+    /**
+     * 是否开启日志记录
+     * @param bool $value
+     */
     public function start(bool $value = true): void
     {
         $this->start = $value;
@@ -244,8 +269,8 @@ class Log implements LoggerInterface
     /**
      * 记录warning信息
      * @access public
-     * @param  mixed  $message 日志信息
-     * @param  array  $context 替换内容
+     * @param mixed $message 日志信息
+     * @param array $context 替换内容
      * @return void
      */
     public function warning($message, array $context = []): void
@@ -253,6 +278,12 @@ class Log implements LoggerInterface
         $this->log(__FUNCTION__, $message, $context);
     }
 
+    /**
+     * 写入指定类型日志
+     * @param        $message
+     * @param string $type
+     * @param array  $context
+     */
     public function write($message, $type = 'info', array $context = []): void
     {
         // 构建一个花括号包含的键名的替换数组
@@ -266,14 +297,22 @@ class Log implements LoggerInterface
         // 替换记录信息中的占位符，最后返回修改后的记录信息。
         $message            = strtr($message, $replace);
         $this->log[$type][] = $message;
+        //命令行模式下，实时保存，防止内存溢出
+        PHP_SAPI === 'cli' && $this->save();
     }
 
+    /**
+     * 把日志写入文件
+     * @param string $content
+     * @param array  $pathReplace
+     */
     protected function toFile(string $content, array $pathReplace): void
     {
         $header = '';
         if ($this->header === null) {
             $header = PHP_EOL . str_repeat('-', 30) . PHP_EOL . '[' . date('Y-m-d H:i:s') . ']';
-        } else {
+        }
+        else {
             $header = $this->header;
         }
         $logPath = strtr($this->logPath, $pathReplace) . '.log';
