@@ -315,7 +315,10 @@ class Log implements LoggerInterface
         else {
             $header = $this->header;
         }
-        $logPath = strtr($this->logPath, $pathReplace) . '.log';
+        $logPath = strtr($this->logPath, $pathReplace);
+        if (substr($logPath, -4) !== '.log') {
+            $logPath .= '.log';
+        }
         $dirPath = dirname($logPath);
         if (!is_dir($dirPath)) {
             @mkdir($dirPath, 0777, true);
