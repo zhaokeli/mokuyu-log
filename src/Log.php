@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace mokuyu;
 
 use Psr\Log\LoggerInterface;
+use Exception;
 
 class Log implements LoggerInterface
 {
@@ -286,6 +287,7 @@ class Log implements LoggerInterface
      */
     public function write($message, $type = 'info', array $context = []): void
     {
+        $message = $this->parseMessageToString($message);
         // 构建一个花括号包含的键名的替换数组
         $replace = [];
         foreach ($context as $key => $val) {
@@ -299,6 +301,19 @@ class Log implements LoggerInterface
         $this->log[$type][] = $message;
         //命令行模式下，实时保存，防止内存溢出
         PHP_SAPI === 'cli' && $this->save();
+    }
+
+    /**
+     * 把错误信息解析成文本
+     * @param $message
+     * @return mixed|string
+     */
+    protected function parseMessageToString($message)
+    {
+        if ($message instanceof Exception) {
+            $message = 'CODE:' . $message->getCode() . PHP_EOL . 'MSG:' . $message->getMessage() . PHP_EOL . 'CLASSNAME:' . get_class($message) . PHP_EOL . 'FILE:' . $message->getFile() . ':' . $message->getLine();
+        }
+        return $message;
     }
 
     /**
